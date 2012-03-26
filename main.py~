@@ -54,25 +54,16 @@ class MAP:
                         # get rid of the \n and \r stuff that is in the text file. 
                         processedLine = line.rstrip('\n')
                         processedLine = processedLine.rstrip('\r')
-                        
-                        LineType = processedLine.split(',')
-                        try:
-                                LineType = processedLine[0] # keep track of the type.
-                                processedLine = processedLine[1:].split(',') # there isn't a comma between the type and the first value.
-                        except:
-                                print processedLine
+                        processedLine = processedLine.split(',')
                         # we found a line type. 
-                        if('L' in LineType):
- #                               print processedLine
-#                                xxx = raw_input("break")
-                                
+                        if('L' in processedLine[0]):
                                 try:
-                                        fX1 = float(processedLine[0])
-                                        fY1 = float(processedLine[1])
-                                        fZ1 = float(processedLine[2])
-                                        fX2 = float(processedLine[3])
-                                        fY2 = float(processedLine[4])
-                                        fZ2 = float(processedLine[5])
+                                        fX1 = float(processedLine[1])
+                                        fY1 = float(processedLine[2])
+                                        fZ1 = float(processedLine[3])
+                                        fX2 = float(processedLine[4])
+                                        fY2 = float(processedLine[5])
+                                        fZ2 = float(processedLine[6])
                                 except:
                                         print "error, probably a issue with conversion to float", processedLine
 
@@ -108,19 +99,16 @@ class MAP:
                                         LargestNegY = fY1*-1
 
                                 vectorLine = {'X1': fX1, 'Y1': fY1, 'Z1': fZ1 , 'X2': fX2, 'Y2': fY2, 'Z2': fZ2}
-                                self.L_Points.append(vectorLine)
                                 # Create a dictionary and append it to the L_Points list.
-                             #   if(self.findGrid(fX1,fY1,fX2,fY2) == True):
-                             #           self.L_Points.append(vectorLine)
+                                if(self.findGrid(fX1,fY1,fX2,fY2) == True):
+                                        self.L_Points.append(vectorLine)
                                         #elf.Grid_Points.append(vectorLine)
-                             #   else:                                       
-                             #           self.L_Points.append(vectorLine)
-
-                             
+                                else:                                       
+                                        self.L_Points.append(vectorLine)
 
 
 
-                        if ('P' in LineType):
+                        if ('P' in processedLine[0]):
                                         self.P_Points.append(processedLine[1:]) # no functionality for these types of points yet.
 
                         self.LargestPosX = LargestX
@@ -157,35 +145,33 @@ class MAP:
                         x = (self.LargestPosX+self.LargestNegX)/ratio
                         y = (self.LargestPosY+self.LargestNegY)/ratio
                         self.surface = pygame.Surface((10000,10000))
-                        self.surface.fill((0,0,0))
-                        #self.LargestNegY = self.LargestNegX
-                        
+                        self.surface.fill((255,255,255))
+                        self.LargestNegY = self.LargestNegX
                         # draw the lines, we add the values their respective largest negative cords, then divide by the ratio.
-                        error = 0
-                        length = len(self.L_Points)
                         for vectorLine in self.L_Points:
                              #   print vectorLine
                                 x1 = vectorLine['X1']
-                                y1 = vectorLine['Y1']
+       #                         if(x1 < 0):
+      #                                  x1 = x1*-1
+                                x1 = (x1+self.LargestNegX) #/ratio
 
                                 x2 = vectorLine['X2']
-                                y2 = vectorLine['Y2']
+    #                            if (x2 < 0):
+     #                                   x2 = x2*-1
+                                x2 = (x2+self.LargestNegX) #/ratio
 
-#                                x1 = x1+1000
-#                                x2 = x2+1000
-#                                y1 = y1+1000
-#                                y2 = y2+1000
-                                x1 = (x1+self.LargestNegX)/ratio
-                                x2 = (x2+self.LargestNegX)/ratio
-                                y1 = (y1+self.LargestNegY)/ratio
-                                y2 = (y2+self.LargestNegY)/ratio
-              
-                                if x1 == x2 and y1 == y2:
-                                        error+=1
-                                    
+                                y1 = vectorLine['Y1']
+  #                              if (y1 < 0):
+   #                                     y1 = y1*-1
+                                y1 = (y1+self.LargestNegY) #/ratio
+
+                                y2 = vectorLine['Y2']
+#                                if (y2 < 0):
+ #                                       y2 = y2*-1
+                                y2 = (y2+self.LargestNegY) #/ratio
+                            #    print x1,y1,x2,y2
+                                
                                 pygame.draw.line(self.surface,self.color,(x1,y1),(x2,y2))
-                        pygame.draw.line(self.surface,self.color,(0,0),(800,600))
-                        print "equalvalues:", error, "vs point list length", length
                         return True
                 
                 
@@ -219,9 +205,9 @@ backSurf = pygame.Surface((10000,10000))
 f = open('southro.txt')
 
 southro = MAP('southro.txt')
-southro.render(4)
+southro.render(1)
 EXIT = False
-RATIO = 4
+RATIO = 1
 MOVE_SPEED = 10
 
 
@@ -244,16 +230,12 @@ while not EXIT:
                                 
                         elif event.key == K_UP:
                                 Y = Y-MOVE_SPEED*RATIO
-                                print Y
                         elif event.key == K_DOWN:
                                 Y = Y+MOVE_SPEED*RATIO
-                                print Y
                         elif event.key == K_LEFT:
                                 X = X+MOVE_SPEED*RATIO
-                                print X
                         elif event.key == K_RIGHT:
                                 X = X-MOVE_SPEED*RATIO
-                                print X
                         elif event.key == K_q:
                                 RATIO = RATIO + 1
                                 
