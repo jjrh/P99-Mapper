@@ -1,0 +1,22 @@
+Project 1999 log based tools.
+-------------------------------------------------------------------------------
++-------------+
+| What is it? |
++-------------+
+Project 1999 is a everquest emulator server that tries to emulate the glory days
+of Everquest like it was in 1999. Because of this, the server has disabled maps
+and external tools that modify the client (such as macroquest) 
+
+To get around this issue one can parse the logs everquest produces to do things
+like provide a DPS meter, a semi accurate position on a map (using /loc) and
+possibily other things. 
+
+Because we process the log files everquest produces this is a perfectly 
+acceptable method of providing a dps meter, a map, etc. ( I confirmed this
+with people on the project 1999 irc channel. )
+
++-------------+
+| Development |
++-------------+
+Program is currently being written using python & pygame. 
+
