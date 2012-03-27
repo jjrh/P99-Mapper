@@ -1,5 +1,4 @@
-import pygame
-
+import sys
 
 import pygame
 from pygame.locals import *
@@ -159,7 +158,7 @@ class MAP:
                         return False
 
 
-        def render(self, ratio=1):
+        def render(self, ratio=1, smaller=True):
                 print "largest pos: (", self.LargestPosX , "," , self.LargestPosY, ")"
                 print "largets neg: (", self.LargestNegX, ",", self.LargestNegY, ")"
                 if ratio == 0:
@@ -184,16 +183,27 @@ class MAP:
                                 x2 = vectorLine['X2']
                                 y2 = vectorLine['Y2']
                                 z2 = vectorLine['Z2']
+                                if(smaller):
+                                        x1 = (x1+self.LargestNegX)/ratio
+                                        x2 = (x2+self.LargestNegX)/ratio
                                 
-                                x1 = (x1+self.LargestNegX)/ratio
-                                x2 = (x2+self.LargestNegX)/ratio
+                                        
+                                        y1 = (y1+self.LargestNegY)/ratio
+                                        y2 = (y2+self.LargestNegY)/ratio
+                                        
+                                        z1 = (z1+self.LargestNegZ)/ratio
+                                        z2 = (z2+self.LargestNegZ)/ratio
+                                else:
+                                        x1 = (x1+self.LargestNegX)*ratio
+                                        x2 = (x2+self.LargestNegX)*ratio
                                 
-
-                                y1 = (y1+self.LargestNegY)/ratio
-                                y2 = (y2+self.LargestNegY)/ratio
-
-                                z1 = (z1+self.LargestNegZ)/ratio
-                                z2 = (z2+self.LargestNegZ)/ratio
+                                        
+                                        y1 = (y1+self.LargestNegY)*ratio
+                                        y2 = (y2+self.LargestNegY)*ratio
+                                        
+                                        z1 = (z1+self.LargestNegZ)*ratio
+                                        z2 = (z2+self.LargestNegZ)*ratio
+                                        
                                 if x1 == x2 and y1 == y2:
                                         error+=1
                                     
@@ -204,9 +214,9 @@ class MAP:
                                 yz1 = y1 + z1
                                 yz2 = y2 + z2
                                 
-                                pygame.draw.line(self.surface,(0,255,0),(xz1,yz1),(xz2,yz2))
-                                pygame.draw.line(self.surface,(0,0,255),(xz1,yz1),(x2,y2))
-                                pygame.draw.line(self.surface,(255,0,255),(xz2,yz2),(x1,y1))
+                                #pygame.draw.line(self.surface,(0,255,0),(xz1,yz1),(xz2,yz2))
+                                #pygame.draw.line(self.surface,(0,0,255),(xz1,yz1),(x2,y2))
+                                #pygame.draw.line(self.surface,(255,0,255),(xz2,yz2),(x1,y1))
                                 
                                 
                         
@@ -241,14 +251,15 @@ backSurf = pygame.Surface((10000,10000))
 
 
 
-f = open('southro.txt')
 
-southro = MAP('southro.txt')
-southro.render(4)
+
+
+southro = MAP('maps/mistmoore_1.txt')
+southro.render(4,False)
 EXIT = False
-RATIO = 4
+RATIO = 1
 MOVE_SPEED = 10
-
+zoom = False
 
 
 screen.blit(fillSurf,(0,0))
@@ -260,12 +271,19 @@ X=0
 Y=0
 
 
+
+mouse_pos = 0
 while not EXIT:
         clock.tick(60)
         for event in pygame.event.get():
+                #print event
+                if event.type == QUIT:
+                        sys.exit()
                 if event.type == KEYDOWN:
                         if event.key == K_ESCAPE:
-                                EXIT=True
+                                #EXIT=True
+                                
+                                sys.exit()
                                 
                         elif event.key == K_UP:
                                 Y = Y-MOVE_SPEED*RATIO
@@ -285,13 +303,43 @@ while not EXIT:
                         elif event.key == K_a:
                                 if RATIO > 0:
                                         RATIO = RATIO - 1
-                                
+                        elif event.key == K_z:
+                                if zoom == False:
+                                        zoom = True
+                                else:
+                                        zoom = False
                         else:
                                 pass
+                if event.type == MOUSEBUTTONDOWN:
+                        print event.button
+                        print pygame.mouse.get_pressed()
                         
-                        screen.blit(fillSurf,(0,0))
-                        screen.blit(southro.surface, (X,Y))
-                        pygame.display.flip()
+                        mouse_pos = pygame.mouse.get_rel()
+
+                if event.type == MOUSEBUTTONUP:
+                        mouse_pos = pygame.mouse.get_rel()
+                        Y = Y + mouse_pos[1]
+                        X = X + mouse_pos[0]
+                if event.type == MOUSEBUTTONDOWN and event.button == 4:
+                        print RATIO
+                        if RATIO > 1:
+                                RATIO = RATIO - 1
+                                southro.render(RATIO,zoom)
+                        else:
+                                RATIO = 1
+                if event.type == MOUSEBUTTONDOWN and event.button == 5:
+                        RATIO = RATIO + 1
+                        southro.render(RATIO,zoom)
+                        
+                
+                        
+
+                        
+                screen.blit(fillSurf,(0,0))
+
+                screen.blit(southro.surface, (X,Y))
+                     
+                pygame.display.flip()
 
 
         
