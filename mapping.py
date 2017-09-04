@@ -56,6 +56,8 @@ class MAP:
                     x1,y1 is the first point
                     x2,y2 is the second point, etc
                     xn,yn is the last point (the Nth point)
+
+                        https://github.com/brainiac/showeq/blob/master/doc/map.html
                     """
                     x1=int(lines[i])
                     i+=1
@@ -77,6 +79,8 @@ class MAP:
                 "M,name,color,n,x1,y1,z1,x2,y2,z2,...,xn,yn,zn"
                 M signals a 3d line line
                 same as L except every point has a z component
+
+                    https://github.com/brainiac/showeq/blob/master/doc/map.html
                 """
                 i=0
                 while(i<len(lines)-3):
