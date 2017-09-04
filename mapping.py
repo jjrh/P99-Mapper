@@ -9,7 +9,107 @@ from pygame.locals import *
 +--------------------------------------
 """
 
+colors = {
+    'gray' : (50,50,50),
+    'blue' : (0,0,255),
+    'white': (255,255,255)
+}
+    
 class MAP:
+    def __init__(self,filename):
+        self.filename = filename
+        self.surface = pygame.Surface((1,1))	# set to 1,1 as default. More there to say this is a surface
+
+        # self.load('showeq-maps-1.0/maps/guka.map');
+        #self.load('showeq-maps-1.0/maps/gukb.map');
+        # self.load('showeq-maps-1.0/maps/gukbottom.map');
+        self.load(self.filename)
+        
+    def load(self,filename):
+        
+        self.surface = pygame.Surface((10000,10000))
+        # self.surface.fill((0,0,0))
+        f = open(filename)
+        for line in f.readlines():
+            line = line.rstrip('\n')
+            line_type=line.split(",")[:3]
+            print line_type
+#            if(line_type
+            print line.split(",")[4:]
+            print "length:",len(line.split(",")[4:])
+            print ""
+
+            lines = line.split(",")[4:]
+            if(len(line_type) < 3):
+                continue
+            if(line_type[1] == "line" and line_type[0] == "L"):
+                print line_type
+
+                i = 0
+                while(i<len(lines)-2):
+                    """
+                    "L,name,color,n,x1,y1,x2,y2,...,xn,yn"
+                    L signals a 2d line line
+                    name is the name of the line
+                    color is the textual color fo the line, gray is the default
+                    n is the number of points in the line
+                    x1,y1 is the first point
+                    x2,y2 is the second point, etc
+                    xn,yn is the last point (the Nth point)
+                    """
+                    x1=int(lines[i])
+                    i+=1
+                    y1=int(lines[i])
+                    i+=1
+                    x2=int(lines[i])
+                    y2=int(lines[i+1])
+
+                    c=None
+                    try:
+                        c=colors[line_type[2]]
+                    except Exception as e:
+                        c=colors['white']
+                    
+                    pygame.draw.line(self.surface,c,(x1,y1),(x2,y2))
+
+            if(line_type[1] == "line" and line_type[0] == "M"):
+                """
+                "M,name,color,n,x1,y1,z1,x2,y2,z2,...,xn,yn,zn"
+                M signals a 3d line line
+                same as L except every point has a z component
+                """
+                i=0
+                while(i<len(lines)-3):
+                    x1=int(lines[i])
+                    y1=int(lines[i+1])
+                    z1=int(lines[i+2])
+
+                    x2=int(lines[i+3])
+                    y2=int(lines[i+4])
+                    z2=int(lines[i+5])
+
+                    i+=3
+                    c=None
+                    try:
+                        c=colors[line_type[2]]
+                        
+                    except Exception as e:
+                        try:
+                            c=int(line_type[2].replace("#","0x"),16)
+                        except Exception as ee:
+                            c=colors['white']
+
+                    pygame.draw.line(self.surface,c,(x1,y1),(x2,y2))           
+
+
+                    
+                
+    def render(self, ratio=1, smaller=True):
+        pass
+
+    
+
+class MAPX:
         def __init__(self, filename):
                 """
                 @args, filename of the map file.
@@ -65,10 +165,11 @@ class MAP:
 
                 gridPoints = []
                 for line in f.readlines():
-
+                    
                         # get rid of the \n and \r stuff that is in the text file. 
                         processedLine = line.rstrip('\n')
                         processedLine = processedLine.rstrip('\r')
+                        print line
                         
                         LineType = processedLine.split(',')
                         try:
@@ -167,7 +268,7 @@ class MAP:
                 else:
                         return False
 
-
+                    
         def render(self, ratio=1, smaller=True):
                 print "largest pos: (", self.LargestPosX , "," , self.LargestPosY, ")"
                 print "largets neg: (", self.LargestNegX, ",", self.LargestNegY, ")"

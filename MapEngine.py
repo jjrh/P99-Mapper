@@ -40,7 +40,9 @@ def main_loop(imap):
     p2Points = []
     otherPoints = []    
     
-    current_map = MAP('maps/gukbottom_1.txt')
+    # current_map = MAP('maps/gukbottom_1.txt')
+    #current_map = MAP('showeq-maps-1.0/maps/guktop.map')
+    current_map = MAP('showeq-maps-1.0/maps/guka.map')
     current_map.render(4,False)
     EXIT = False
     RATIO = 1
